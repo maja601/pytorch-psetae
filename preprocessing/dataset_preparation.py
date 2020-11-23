@@ -22,7 +22,7 @@ import os
 
 
 
-def prepare_dataset(output_path, input_folder, rpg_file, label_names=['CODE_GROUP']):
+def prepare_dataset(output_path, input_folder, rpg_file, label_names=['c_group_co']):
     """
 
     Args:
@@ -124,7 +124,7 @@ def date_parser(filepath):
 
 
 
-def parse_rpg(rpg_file, label_names=['CODE_GROUP']):
+def parse_rpg(rpg_file, label_names=['c_group_co']):
     """Reads rpg and returns a dict of pairs (ID_PARCEL : Polygon) and a dict of dict of labels
      {label_name1: {(ID_PARCEL : Label value)},
       label_name2: {(ID_PARCEL : Label value)}
@@ -141,9 +141,9 @@ def parse_rpg(rpg_file, label_names=['CODE_GROUP']):
 
     for f in tqdm(data['features']):
         p = Polygon(f['geometry']['coordinates'][0][0])
-        polygons[f['properties']['ID_PARCEL']] = p
+        polygons[f['properties']['ID']] = p
         for l in label_names:
-            lab_rpg[l][f['properties']['ID_PARCEL']] = f['properties'][l]
+            lab_rpg[l][f['properties']['ID']] = f['properties'][l]
     return polygons, lab_rpg
 
 
@@ -169,8 +169,8 @@ def prepare_output(output_path):
 
 
 if __name__ == '__main__':
-    rpg_file = 'rpg_2017_T31TFM.geojson'
-    input_folder = './S2-L2A-2017-T31TFM'
-    out_path = './PixelSet-S2-2017-T31TFM'
+    rpg_file = '/home/maja/Documents/Dataset_4_garnot/slovenia_32633.geojson'
+    input_folder = '/home/maja/Documents/Dataset_4_garnot/SentinelTiles_with_names_4_garnot'
+    out_path = '/home/maja/Documents/Dataset_4_garnot/pixelset'
 
-    prepare_dataset(out_path, input_folder, rpg_file, label_names=['CODE_GROUP'])
+    prepare_dataset(out_path, input_folder, rpg_file, label_names=['c_group_co'])
