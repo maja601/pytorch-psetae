@@ -38,8 +38,7 @@ class TemporalAttentionEncoder(nn.Module):
         super(TemporalAttentionEncoder, self).__init__()
         self.in_channels = in_channels
         self.positions = positions
-        # self.n_neurons = copy.deepcopy(n_neurons)
-        self.n_neurons = [128, 128, 128]
+        self.n_neurons = copy.deepcopy(n_neurons)
 
         self.name = 'TAE_dk{}_{}Heads_{}_T{}_do{}'.format(d_k, n_head, '|'.join(list(map(str, self.n_neurons))), T,
                                                           dropout)
@@ -69,7 +68,7 @@ class TemporalAttentionEncoder(nn.Module):
         self.attention_heads = MultiHeadAttention(
             n_head=n_head, d_k=d_k, d_in=self.d_model)
 
-        # assert (self.n_neurons[0] == n_head * self.d_model)
+        assert (self.n_neurons[0] == n_head * self.d_model)
         assert (self.n_neurons[-1] == self.d_model)
         layers = []
         for i in range(len(self.n_neurons) - 1):
@@ -120,10 +119,6 @@ class MultiHeadAttention(nn.Module):
         self.fc1_k = nn.Linear(d_in, n_head * d_k)
         nn.init.normal_(self.fc1_k.weight, mean=0, std=np.sqrt(2.0 / (d_k)))
 
-        # Maja
-        self.fc1_v = nn.Linear(d_in, n_head * d_k)
-        nn.init.normal_(self.fc1_v.weight, mean=0, std=np.sqrt(2.0 / (d_k)))
-
         self.fc2 = nn.Sequential(
             nn.BatchNorm1d(n_head * d_k),
             nn.Linear(n_head * d_k, n_head * d_k)
@@ -143,16 +138,11 @@ class MultiHeadAttention(nn.Module):
         k = self.fc1_k(k).view(sz_b, seq_len, n_head, d_k)
         k = k.permute(2, 0, 1, 3).contiguous().view(-1, seq_len, d_k)  # (n*b) x lk x dk
 
-        # v = v.repeat(n_head, 1, 1)  # (n*b) x lv x d_in
-        ## Transformer
-        v = self.fc1_v(v).view(sz_b, seq_len, n_head, d_k)
-        v = v.permute(2, 0, 1, 3).contiguous().view(-1, seq_len, d_k)
+        v = v.repeat(n_head, 1, 1)  # (n*b) x lv x d_in
 
         output, attn = self.attention(q, k, v)
 
-        # output = output.view(n_head, sz_b, 1, d_in)
-        ## Transformer
-        output = output.view(n_head, sz_b, 1, d_k)
+        output = output.view(n_head, sz_b, 1, d_in)
         output = output.squeeze(dim=2)
 
         return output, attn

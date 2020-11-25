@@ -162,20 +162,63 @@ def main(config):
     torch.manual_seed(config['rdm_seed'])
     prepare_output(config)
 
-    mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2017-T31TFM-meanstd.pkl', 'rb'))
+    # mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2017-T31TFM-meanstd.pkl', 'rb'))
+    mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2019-T33TWM-meanstd.pkl', 'rb'))
     extra = 'geomfeat' if config['geomfeat'] else None
 
+    ##################
+    # ORIGINAL
+    ##################
+    # if config['preload']:
+    #     dt = PixelSetData_preloaded(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+    #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+    #                       norm=mean_std,
+    #                       extra_feature=extra)
+    # else:
+    #     dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+    #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+    #                       norm=mean_std,
+    #                       extra_feature=extra)
+
+    ##################
+    # SLOVENIA WITH TOP 20 CLASSES FRANCE
+    ##################
+    # if config['preload']:
+    #     dt = PixelSetData_preloaded(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+    #                                 sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36,
+    #                                              39],
+    #                                 norm=mean_std,
+    #                                 extra_feature=extra)
+    # else:
+    #     dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+    #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+    #                       norm=mean_std,
+    #                       extra_feature=extra)
+    # device = torch.device(config['device'])
+
+    ##################
+    # SLOVENIA WITH TOP 20 CLASSES SLOVENIA
+    ##################
     if config['preload']:
-        dt = PixelSetData_preloaded(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
-                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
-                          norm=mean_std,
-                          extra_feature=extra)
+        dt = PixelSetData_preloaded(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+                                    sub_classes=[33200000, 33101060, 33101010, 33101040, 33301010, 33304000, 33111020,
+                                                 33109000, 33103000, 33107000, 33101070, 33106042, 33101050, 33114000,
+                                                 33101030, 33111022, 33101100, 33301040, 33106020, 33106040
+                                                 ],
+                                    norm=mean_std,
+                                    extra_feature=extra)
     else:
-        dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
-                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+        dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+                          sub_classes=[33200000, 33101060, 33101010, 33101040, 33301010, 33304000, 33111020,
+                                       33109000, 33103000, 33107000, 33101070, 33106042, 33101050, 33114000,
+                                       33101030, 33111022, 33101100, 33301040, 33106020, 33106040
+                                       ],
                           norm=mean_std,
                           extra_feature=extra)
     device = torch.device(config['device'])
+
+    leng = len(dt)
+    print(leng)
 
     loaders = get_loaders(dt, config['kfold'], config)
     for fold, (train_loader, val_loader, test_loader) in enumerate(loaders):
@@ -203,8 +246,6 @@ def main(config):
         criterion = FocalLoss(config['gamma'])
 
         trainlog = {}
-
-
 
         best_mIoU = 0
         for epoch in range(1, config['epochs'] + 1):
@@ -248,7 +289,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Set-up parameters
-    parser.add_argument('--dataset_folder', default='', type=str,
+    parser.add_argument('--dataset_folder', default='/home/maja/ssd/rc2020dataset/Dataset_4_garnot/eurocrops_as_garnot/', type=str,
                         help='Path to the folder where the results are saved.')
     parser.add_argument('--res_dir', default='./results', help='Path to the folder where the results should be stored')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of data loading workers')

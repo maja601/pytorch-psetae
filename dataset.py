@@ -45,6 +45,7 @@ class PixelSetData(data.Dataset):
 
         self.pid = list(map(str, self.pid))
         self.len = len(self.pid)
+        print(self.len)
 
         # Get Labels
         if sub_classes is not None:
