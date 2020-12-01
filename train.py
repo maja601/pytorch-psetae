@@ -9,6 +9,7 @@ import json
 import pickle as pkl
 import argparse
 import pprint
+import time
 
 from models.stclassifier import PseTae
 from dataset import PixelSetData, PixelSetData_preloaded
@@ -24,6 +25,7 @@ def train_epoch(model, optimizer, criterion, data_loader, device, config):
     y_pred = []
 
     for i, (x, y) in enumerate(data_loader):
+
 
         y_true.extend(list(map(int, y)))
 
@@ -162,23 +164,24 @@ def main(config):
     torch.manual_seed(config['rdm_seed'])
     prepare_output(config)
 
-    # mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2017-T31TFM-meanstd.pkl', 'rb'))
-    mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2019-T33TWM-meanstd.pkl', 'rb'))
+    mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2017-T31TFM-meanstd.pkl', 'rb'))
+    # mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2019-T33TWM-meanstd.pkl', 'rb'))
     extra = 'geomfeat' if config['geomfeat'] else None
 
     ##################
     # ORIGINAL
     ##################
-    # if config['preload']:
-    #     dt = PixelSetData_preloaded(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
-    #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
-    #                       norm=mean_std,
-    #                       extra_feature=extra)
-    # else:
-    #     dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
-    #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
-    #                       norm=mean_std,
-    #                       extra_feature=extra)
+    if config['preload']:
+        dt = PixelSetData_preloaded(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+                          norm=mean_std,
+                          extra_feature=extra)
+    else:
+        dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+                          norm=mean_std,
+                          extra_feature=extra)
+
 
     ##################
     # SLOVENIA WITH TOP 20 CLASSES FRANCE
@@ -194,27 +197,61 @@ def main(config):
     #                       sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
     #                       norm=mean_std,
     #                       extra_feature=extra)
-    # device = torch.device(config['device'])
 
     ##################
     # SLOVENIA WITH TOP 20 CLASSES SLOVENIA
     ##################
-    if config['preload']:
-        dt = PixelSetData_preloaded(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
-                                    sub_classes=[33200000, 33101060, 33101010, 33101040, 33301010, 33304000, 33111020,
-                                                 33109000, 33103000, 33107000, 33101070, 33106042, 33101050, 33114000,
-                                                 33101030, 33111022, 33101100, 33301040, 33106020, 33106040
-                                                 ],
-                                    norm=mean_std,
-                                    extra_feature=extra)
-    else:
-        dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
-                          sub_classes=[33200000, 33101060, 33101010, 33101040, 33301010, 33304000, 33111020,
-                                       33109000, 33103000, 33107000, 33101070, 33106042, 33101050, 33114000,
-                                       33101030, 33111022, 33101100, 33301040, 33106020, 33106040
-                                       ],
-                          norm=mean_std,
-                          extra_feature=extra)
+    # if config['preload']:
+    #     dt = PixelSetData_preloaded(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+    #                                 sub_classes=[33200000,
+    #                                              33101060,
+    #                                              33101010,
+    #                                              33101040,
+    #                                              33301010,
+    #                                              33304000,
+    #                                              33111023,
+    #                                              33109000,
+    #                                              33103000,
+    #                                              33107000,
+    #                                              33101070,
+    #                                              33106042,
+    #                                              33101050,
+    #                                              33101030,
+    #                                              33111022,
+    #                                              33101100,
+    #                                              33301040,
+    #                                              33106020,
+    #                                              33106040,
+    #                                              33101080
+    #                                              ],
+    #                                 norm=mean_std,
+    #                                 extra_feature=extra)
+    # else:
+    #     dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
+    #                       sub_classes=[33200000,
+    #                                    33101060,
+    #                                    33101010,
+    #                                    33101040,
+    #                                    33301010,
+    #                                    33304000,
+    #                                    33111023,
+    #                                    33109000,
+    #                                    33103000,
+    #                                    33107000,
+    #                                    33101070,
+    #                                    33106042,
+    #                                    33101050,
+    #                                    33101030,
+    #                                    33111022,
+    #                                    33101100,
+    #                                    33301040,
+    #                                    33106020,
+    #                                    33106040,
+    #                                    33101080
+    #                                    ],
+    #                       norm=mean_std,
+    #                       extra_feature=extra)
+
     device = torch.device(config['device'])
 
     leng = len(dt)
@@ -248,7 +285,9 @@ def main(config):
         trainlog = {}
 
         best_mIoU = 0
+
         for epoch in range(1, config['epochs'] + 1):
+            start = time.time()
             print('EPOCH {}/{}'.format(epoch, config['epochs']))
 
             model.train()
@@ -269,6 +308,8 @@ def main(config):
                 torch.save({'epoch': epoch, 'state_dict': model.state_dict(),
                             'optimizer': optimizer.state_dict()},
                            os.path.join(config['res_dir'], 'Fold_{}'.format(fold + 1), 'model.pth.tar'))
+            end = time.time()
+            print(end - start)
 
         print('Testing best epoch . . .')
         model.load_state_dict(
@@ -289,7 +330,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Set-up parameters
-    parser.add_argument('--dataset_folder', default='/home/maja/ssd/rc2020dataset/Dataset_4_garnot/eurocrops_as_garnot/', type=str,
+    parser.add_argument('--dataset_folder', default='/home/maja/ssd/rc2020dataset/pixelset/', type=str,
                         help='Path to the folder where the results are saved.')
     parser.add_argument('--res_dir', default='./results', help='Path to the folder where the results should be stored')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of data loading workers')

@@ -15,15 +15,38 @@ from dataset import PixelSetData
 def prepare_model_and_loader(config):
     mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2019-T33TWM-meanstd.pkl', 'rb'))
     extra = 'geomfeat' if config['geomfeat'] else None
+    ##################
+    # TOP 20 CLASSES FRANCE
+    ##################
     # dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
     #                   sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
     #                   norm=mean_std,
     #                   extra_feature=extra, return_id=True)
     # dl = data.DataLoader(dt, batch_size=config['batch_size'], num_workers=config['num_workers'])
+    ##################
+    # TOP 20 CLASSES SLOVENIA
+    ##################
     dt = PixelSetData(config['dataset_folder'], labels='c_group_co', npixel=config['npixel'],
-                      sub_classes=[33200000, 33101060, 33101010, 33101040, 33301010, 33304000, 33111020,
-                                   33109000, 33103000, 33107000, 33101070, 33106042, 33101050, 33114000,
-                                   33101030, 33111022, 33101100, 33301040, 33106020, 33106040
+                      sub_classes=[33200000,
+                                   33101060,
+                                   33101010,
+                                   33101040,
+                                   33301010,
+                                   33304000,
+                                   33111023,
+                                   33109000,
+                                   33103000,
+                                   33107000,
+                                   33101070,
+                                   33106042,
+                                   33101050,
+                                   33101030,
+                                   33111022,
+                                   33101100,
+                                   33301040,
+                                   33106020,
+                                   33106040,
+                                   33101080
                                    ],
                       norm=mean_std,
                       extra_feature=extra, return_id=True)
@@ -89,7 +112,7 @@ if __name__ == '__main__':
     # Set-up parameters
     parser.add_argument('--dataset_folder', default='/home/maja/ssd/rc2020dataset/Dataset_4_garnot/eurocrops_as_garnot/', type=str,
                         help='Path to the folder where the results are saved.')
-    parser.add_argument('--weight_dir', default='/home/maja/ssd/rc2020results/results_train_EC_20slov/', type=str,
+    parser.add_argument('--weight_dir', default='/home/maja/hdd8/rc2020results/results_trainT_S_20Scorr/', type=str,
                         help='Path to the folder containing the model weights')
     parser.add_argument('--fold', default='all', type=str,
                         help='Specify whether to load the weight sets of al folds (all) or '
@@ -116,7 +139,7 @@ if __name__ == '__main__':
     ## TAE
     parser.add_argument('--n_head', default=4, type=int, help='Number of attention heads')
     parser.add_argument('--d_k', default=32, type=int, help='Dimension of the key and query vectors')
-    parser.add_argument('--mlp3', default='[512,128,128]', type=str, help='Number of neurons in the layers of MLP3')
+    parser.add_argument('--mlp3', default='[128,128,128]', type=str, help='Number of neurons in the layers of MLP3')
     parser.add_argument('--T', default=1000, type=int, help='Maximum period for the positional encoding')
     parser.add_argument('--positions', default='bespoke', type=str,
                         help='Positions to use for the positional encoding (bespoke / order)')
