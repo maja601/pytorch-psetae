@@ -21,7 +21,7 @@ requirements. Lastly, we release a large open-access annotated dataset as a benc
 for future work on satellite image time series.*
 
 
-## All credits belong to the original authors
+## Credits
 
 - The **Temporal Attention Encoder** is heavily inspired by 
 [the works of Vaswani et al.](https://papers.nips.cc/paper/7181-attention-is-all-you-need.pdf) on the Transformer, 
@@ -30,9 +30,6 @@ served as code base for the TAE.py script.
 - Credits to  github.com/clcarwin/ for [the pytorch implementation](github.com/clcarwin/focal_loss_pytorch) 
 of the focal loss
 
-## Reference
-
-In case you use part of the present code, please include a citation to the following paper:
 
 ```
 @article{garnot2019psetae,
